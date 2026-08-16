@@ -28,6 +28,20 @@ export async function connectDB(uri = process.env.MONGODB_URI || env.MONGODB_URI
     const dbName = conn.connection.name || 'lume';
     const host = conn.connection.host || 'MongoDB Cluster';
     console.log(`[MongoDB Connected (Primary)]: ${host}/${dbName} (${sanitizeMongoUri(targetUri)})`);
+
+    // Auto-seed database if empty (0 products)
+    try {
+      const { Product } = await import('../models/Product.js');
+      const productCount = await Product.countDocuments({});
+      if (productCount === 0) {
+        console.log('[MongoDB Primary]: Database is empty. Auto-seeding catalog & demo analytics...');
+        const { seedDemoData } = await import('../scripts/seedDemoData.js');
+        await seedDemoData();
+      }
+    } catch (seedErr) {
+      console.error('[MongoDB Auto-Seed Warning]:', seedErr.message);
+    }
+
     return conn;
   } catch (error) {
     console.error(`[MongoDB Primary Error]: Connection failed to ${sanitizeMongoUri(targetUri)}: ${error.message}`);

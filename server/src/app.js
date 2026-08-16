@@ -29,8 +29,15 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman) or matching CLIENT_URL
-      if (!origin || origin === env.CLIENT_URL || env.NODE_ENV === 'development') {
+      // Allow requests with no origin, matching CLIENT_URL, development mode, or cloud hosting origins (.onrender.com, .vercel.app)
+      if (
+        !origin ||
+        origin === env.CLIENT_URL ||
+        env.CLIENT_URL === '*' ||
+        env.NODE_ENV === 'development' ||
+        origin.endsWith('.onrender.com') ||
+        origin.endsWith('.vercel.app')
+      ) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
