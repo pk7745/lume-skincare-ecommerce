@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
+import dns from 'dns';
 import { env } from './env.js';
 
 let memServer = null;
@@ -17,6 +18,14 @@ export async function connectDB(uri = process.env.MONGODB_URI || env.MONGODB_URI
   }
   const isAtlas = targetUri.startsWith('mongodb+srv://');
   const isProduction = process.env.NODE_ENV === 'production';
+
+  if (isAtlas) {
+    try {
+      dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch (e) {
+      // Ignore if custom dns servers cannot be set
+    }
+  }
 
   // 1. Primary MONGODB_URI (Production MongoDB Atlas or Configured URI)
   try {

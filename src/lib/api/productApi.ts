@@ -37,46 +37,46 @@ export const productApi = {
     if (filters.limit) params.set('limit', String(filters.limit));
 
     const data = await apiClient<ProductListResponse>(`/products?${params.toString()}`);
-    return data.products;
+    return data?.products || [];
   },
 
   getProductBySlug: async (slug: string) => {
     const data = await apiClient<{ success: boolean; product: Product }>(`/products/slug/${slug}`);
-    return data.product;
+    return data?.product;
   },
 
   getProductById: async (id: string) => {
     const data = await apiClient<{ success: boolean; product: Product }>(`/products/${id}`);
-    return data.product;
+    return data?.product;
   },
 
   getAutocomplete: async (q: string, limit = 6) => {
     const data = await apiClient<{ success: boolean; suggestions: Product[] }>(
       `/products/search/autocomplete?q=${encodeURIComponent(q)}&limit=${limit}`
     );
-    return data.suggestions;
+    return data?.suggestions || [];
   },
 
   getTrending: async (limit = 8) => {
     const data = await apiClient<{ success: boolean; products: Product[] }>(`/products/trending?limit=${limit}`);
-    return data.products;
+    return data?.products || [];
   },
 
   getBestSellers: async (limit = 8) => {
     const data = await apiClient<{ success: boolean; products: Product[] }>(`/products/best-sellers?limit=${limit}`);
-    return data.products;
+    return data?.products || [];
   },
 
   getNewArrivals: async (limit = 8) => {
     const data = await apiClient<{ success: boolean; products: Product[] }>(`/products/new-arrivals?limit=${limit}`);
-    return data.products;
+    return data?.products || [];
   },
 
   getRecommendations: async (id: string, limit = 4) => {
     const data = await apiClient<{ success: boolean; products: Product[] }>(
       `/products/${id}/recommendations?limit=${limit}`
     );
-    return data.products;
+    return data?.products || [];
   },
 
   logEvent: async (id: string, eventType: 'view' | 'cart_add' | 'wishlist_add' | 'purchase', quantity = 1) => {
