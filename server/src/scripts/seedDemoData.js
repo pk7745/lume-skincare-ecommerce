@@ -19,7 +19,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const DEMO_SEED_ID = 'lume-demo-2026';
 
-export async function seedDemoData() {
+export async function seedDemoData(force = false) {
   if (mongoose.connection.readyState !== 1) {
     await connectDB();
   }
@@ -34,119 +34,269 @@ export async function seedDemoData() {
 
   // 2. Ensure Categories exist
   let categories = await Category.find({});
-  if (categories.length === 0) {
+  if (categories.length === 0 || force) {
+    if (force) await Category.deleteMany({});
     const defaultCats = [
-      { name: 'Cleansers', slug: 'cleansers', description: 'Gentle daily cleansers' },
-      { name: 'Serums', slug: 'serums', description: 'Targeted botanical serums' },
-      { name: 'Moisturizers', slug: 'moisturizers', description: 'Barrier restoration creams' },
-      { name: 'Sunscreen', slug: 'sunscreen', description: 'Mineral broad-spectrum SPF' },
-      { name: 'Exfoliators', slug: 'exfoliators', description: 'Smoothing AHA/BHA peels' },
-      { name: 'Masks', slug: 'masks', description: 'Nourishing hydration masks' },
+      { name: 'Cleansers', slug: 'cleansers', description: 'Gentle daily cleansers that respect skin barrier' },
+      { name: 'Serums', slug: 'serums', description: 'Targeted botanical & bio-compatible serums' },
+      { name: 'Moisturizers', slug: 'moisturizers', description: 'Barrier restoration & deep hydration creams' },
+      { name: 'Sunscreen', slug: 'sunscreen', description: 'Broad-spectrum non-nano mineral SPF protection' },
+      { name: 'Exfoliators', slug: 'exfoliators', description: 'Smoothing AHA/BHA peels and gentle enzyme powders' },
+      { name: 'Masks', slug: 'masks', description: 'Nourishing clay, overnight, and hydration masks' },
     ];
     categories = await Category.insertMany(defaultCats);
   }
 
-  // 3. Ensure Products exist
+  // Map categories by slug for reliable association
+  const catMap = {};
+  categories.forEach((c) => {
+    catMap[c.slug] = c._id;
+  });
+
+  // 3. Ensure 18 Distinct Products exist across all 6 categories
   let products = await Product.find({ isActive: true });
-  if (products.length === 0) {
+  if (products.length < 18 || force) {
+    if (force || products.length < 18) await Product.deleteMany({});
+
     const defaultProducts = [
-      {
-        name: 'Hyaluronic Hydrating Serum',
-        slug: 'hyaluronic-hydrating-serum',
-        description: 'Multi-depth hydration with botanical hyaluronic acid and vitamin B5.',
-        price: 48,
-        compare_at_price: 58,
-        category: categories[1]._id,
-        images: ['https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg'],
-        sizes: ['30ml', '50ml'],
-        skin_type: 'dry',
-        stock: 28,
-        featured: true,
-      },
-      {
-        name: 'Barrier Repair Moisturizer',
-        slug: 'barrier-repair-moisturizer',
-        description: 'Ceramide-rich barrier restoration cream for sensitive skin.',
-        price: 54,
-        category: categories[2]._id,
-        images: ['https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg'],
-        sizes: ['50ml'],
-        skin_type: 'sensitive',
-        stock: 45,
-        featured: true,
-      },
+      // CATEGORY 1: CLEANSER (3 distinct products)
       {
         name: 'Gentle Cleansing Balm',
         slug: 'gentle-cleansing-balm',
-        description: 'Melt-away oil cleansing balm enriched with sea buckthorn.',
+        description: 'Melt-away oil cleansing balm enriched with sea buckthorn, jojoba oil, and wild chamomile to dissolve makeup without stripping.',
         price: 38,
-        category: categories[0]._id,
+        compare_at_price: 45,
+        category: catMap['cleansers'] || categories[0]._id,
         images: ['https://images.pexels.com/photos/3685530/pexels-photo-3685530.jpeg'],
-        sizes: ['100ml'],
+        sizes: ['100ml', '200ml'],
         skin_type: 'all',
-        stock: 4,
+        stock: 35,
+        featured: true,
+      },
+      {
+        name: 'Purifying Botanical Gel Cleanser',
+        slug: 'purifying-botanical-gel-cleanser',
+        description: 'Clarifying pH-balanced gel cleanser with green tea, tea tree, and centella asiatica to soothe breakout-prone skin.',
+        price: 34,
+        category: catMap['cleansers'] || categories[0]._id,
+        images: ['https://images.pexels.com/photos/14836428/pexels-photo-14836428.jpeg'],
+        sizes: ['150ml'],
+        skin_type: 'oily',
+        stock: 38,
         featured: false,
+      },
+      {
+        name: 'Restorative Oat Milk Cleanser',
+        slug: 'restorative-oat-milk-cleanser',
+        description: 'Ultra-nourishing cream cleanser with colloidal oat, squalane, and marshmallow root for delicate, compromised barriers.',
+        price: 40,
+        compare_at_price: 48,
+        category: catMap['cleansers'] || categories[0]._id,
+        images: ['https://images.pexels.com/photos/15569182/pexels-photo-15569182.jpeg'],
+        sizes: ['150ml', '250ml'],
+        skin_type: 'sensitive',
+        stock: 28,
+        featured: true,
+      },
+
+      // CATEGORY 2: SERUMS (3 distinct products)
+      {
+        name: 'Hyaluronic Hydrating Serum',
+        slug: 'hyaluronic-hydrating-serum',
+        description: 'Multi-depth moisture replenishment with triple-weight hyaluronic acid, snow mushroom extract, and vitamin B5.',
+        price: 48,
+        compare_at_price: 58,
+        category: catMap['serums'] || categories[1]._id,
+        images: ['https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg'],
+        sizes: ['30ml', '50ml'],
+        skin_type: 'dry',
+        stock: 50,
+        featured: true,
       },
       {
         name: 'Niacinamide Radiance Essence',
         slug: 'niacinamide-radiance-essence',
-        description: '10% niacinamide essence to minimize pores and even skin tone.',
+        description: '10% niacinamide and zinc PCA essence to refine pore texture, diminish hyperpigmentation, and regulate excess sebum.',
         price: 42,
         compare_at_price: 50,
-        category: categories[1]._id,
+        category: catMap['serums'] || categories[1]._id,
         images: ['https://images.pexels.com/photos/8101532/pexels-photo-8101532.jpeg'],
         sizes: ['100ml'],
         skin_type: 'oily',
-        stock: 19,
+        stock: 36,
         featured: true,
-      },
-      {
-        name: 'Mineral Silk SPF 50',
-        slug: 'mineral-silk-spf-50',
-        description: 'Invisible non-nano zinc oxide sunscreen with sheer finish.',
-        price: 46,
-        category: categories[3]._id,
-        images: ['https://images.pexels.com/photos/5938250/pexels-photo-5938250.jpeg'],
-        sizes: ['50ml'],
-        skin_type: 'all',
-        stock: 0,
-        featured: true,
-      },
-      {
-        name: 'AHA Clarifying Treatment',
-        slug: 'aha-clarifying-treatment',
-        description: 'Exfoliating night liquid with glycolic acid and willow bark.',
-        price: 52,
-        category: categories[4]._id,
-        images: ['https://images.pexels.com/photos/8101529/pexels-photo-8101529.jpeg'],
-        sizes: ['30ml'],
-        skin_type: 'combination',
-        stock: 3,
-        featured: false,
-      },
-      {
-        name: 'Calming Clay Mask',
-        slug: 'calming-clay-mask',
-        description: 'French pink clay mask with chamomile to soothe stressed skin.',
-        price: 40,
-        category: categories[5]._id,
-        images: ['https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg'],
-        sizes: ['75ml'],
-        skin_type: 'all',
-        stock: 32,
-        featured: false,
       },
       {
         name: 'Vitamin C Glow Oil',
         slug: 'vitamin-c-glow-oil',
-        description: 'THD ascorbate lipid facial oil for immediate luminous radiance.',
+        description: 'High-potency THD ascorbate lipid facial oil with rosehip and sea buckthorn for intense morning luminosity and antioxidant protection.',
         price: 62,
-        compare_at_price: 70,
-        category: categories[1]._id,
+        compare_at_price: 72,
+        category: catMap['serums'] || categories[1]._id,
         images: ['https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg'],
         sizes: ['30ml'],
+        skin_type: 'combination',
+        stock: 24,
+        featured: true,
+      },
+
+      // CATEGORY 3: MOISTURIZERS (3 distinct products)
+      {
+        name: 'Barrier Repair Moisturizer',
+        slug: 'barrier-repair-moisturizer',
+        description: 'Ceramide-rich barrier restoration cream infused with 5 essential ceramides, copper peptides, and squalane.',
+        price: 54,
+        compare_at_price: 64,
+        category: catMap['moisturizers'] || categories[2]._id,
+        images: ['https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg'],
+        sizes: ['50ml'],
+        skin_type: 'sensitive',
+        stock: 42,
+        featured: true,
+      },
+      {
+        name: 'Velvet Dew Hydrating Gel Cream',
+        slug: 'velvet-dew-hydrating-gel-cream',
+        description: 'Weightless cooling gel-cream with fermented aloe vera, bamboo extract, and green tea for oil-free 48-hour moisture.',
+        price: 46,
+        category: catMap['moisturizers'] || categories[2]._id,
+        images: ['https://images.pexels.com/photos/36698525/pexels-photo-36698525.jpeg'],
+        sizes: ['50ml'],
+        skin_type: 'oily',
+        stock: 30,
+        featured: false,
+      },
+      {
+        name: 'Bakuchiol Overnight Renewal Cream',
+        slug: 'bakuchiol-overnight-renewal-cream',
+        description: 'Restorative night moisturizer powered by 2% natural bakuchiol, wild pansy extract, and shea butter to smooth texture overnight.',
+        price: 65,
+        compare_at_price: 75,
+        category: catMap['moisturizers'] || categories[2]._id,
+        images: ['https://images.pexels.com/photos/18350885/pexels-photo-18350885.jpeg'],
+        sizes: ['50ml'],
         skin_type: 'dry',
-        stock: 2,
+        stock: 18,
+        featured: true,
+      },
+
+      // CATEGORY 4: SUNSCREEN (3 distinct products)
+      {
+        name: 'Mineral Silk SPF 50',
+        slug: 'mineral-silk-spf-50',
+        description: 'Invisible broad-spectrum non-nano zinc oxide sunscreen with sheer matte finish and zero white cast.',
+        price: 46,
+        compare_at_price: 54,
+        category: catMap['sunscreen'] || categories[3]._id,
+        images: ['https://images.pexels.com/photos/5938250/pexels-photo-5938250.jpeg'],
+        sizes: ['50ml'],
+        skin_type: 'all',
+        stock: 40,
+        featured: true,
+      },
+      {
+        name: 'Hydrating Daily Defense Sun Mist SPF 40',
+        slug: 'hydrating-daily-defense-sun-mist-spf-40',
+        description: 'Ultra-fine weightless facial sun mist with aloe vera and broad-spectrum UV filters for easy reapplication over makeup.',
+        price: 40,
+        category: catMap['sunscreen'] || categories[3]._id,
+        images: ['https://images.pexels.com/photos/8384509/pexels-photo-8384509.jpeg'],
+        sizes: ['80ml'],
+        skin_type: 'combination',
+        stock: 25,
+        featured: false,
+      },
+      {
+        name: 'Tinted Adaptogen Mineral SPF 30',
+        slug: 'tinted-adaptogen-mineral-spf-30',
+        description: 'Lightweight tinted mineral sunscreen infused with ashwagandha and iron oxides to protect against blue light and UV.',
+        price: 50,
+        compare_at_price: 58,
+        category: catMap['sunscreen'] || categories[3]._id,
+        images: ['https://images.pexels.com/photos/34823989/pexels-photo-34823989.jpeg'],
+        sizes: ['50ml'],
+        skin_type: 'sensitive',
+        stock: 22,
+        featured: true,
+      },
+
+      // CATEGORY 5: EXFOLIATORS (3 distinct products)
+      {
+        name: 'AHA Clarifying Night Treatment',
+        slug: 'aha-clarifying-night-treatment',
+        description: 'Exfoliating night liquid with 8% glycolic acid, lactic acid, and willow bark extract to dissolve dull surface cells.',
+        price: 52,
+        compare_at_price: 60,
+        category: catMap['exfoliators'] || categories[4]._id,
+        images: ['https://images.pexels.com/photos/8101529/pexels-photo-8101529.jpeg'],
+        sizes: ['30ml'],
+        skin_type: 'combination',
+        stock: 22,
+        featured: false,
+      },
+      {
+        name: 'BHA Pore Refining Polish',
+        slug: 'bha-pore-refining-polish',
+        description: 'Dual-action physical and chemical exfoliating scrub with 2% salicylic acid and smooth jojoba micro-beads.',
+        price: 44,
+        category: catMap['exfoliators'] || categories[4]._id,
+        images: ['https://images.pexels.com/photos/16008943/pexels-photo-16008943.jpeg'],
+        sizes: ['75ml'],
+        skin_type: 'oily',
+        stock: 34,
+        featured: true,
+      },
+      {
+        name: 'Enzyme Radiance Peeling Powder',
+        slug: 'enzyme-radiance-peeling-powder',
+        description: 'Water-activated micro-powder cleanser with papaya enzymes and rice bran to polish skin without micro-tears.',
+        price: 48,
+        compare_at_price: 55,
+        category: catMap['exfoliators'] || categories[4]._id,
+        images: ['https://images.pexels.com/photos/30877766/pexels-photo-30877766.jpeg'],
+        sizes: ['60g'],
+        skin_type: 'sensitive',
+        stock: 29,
+        featured: false,
+      },
+
+      // CATEGORY 6: MASKS (3 distinct products)
+      {
+        name: 'Calming French Pink Clay Mask',
+        slug: 'calming-french-pink-clay-mask',
+        description: 'Detoxifying pink clay treatment with chamomile and elderflower to draw out impurities without dry tightness.',
+        price: 40,
+        compare_at_price: 48,
+        category: catMap['masks'] || categories[5]._id,
+        images: ['https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg'],
+        sizes: ['75ml'],
+        skin_type: 'sensitive',
+        stock: 32,
+        featured: false,
+      },
+      {
+        name: 'Overnight Deep Moisture Sleep Mask',
+        slug: 'overnight-deep-moisture-sleep-mask',
+        description: 'Intensive leave-on gel mask with blue tansy oil, hyaluronic acid, and spirulina to replenish skin during deep sleep.',
+        price: 56,
+        compare_at_price: 65,
+        category: catMap['masks'] || categories[5]._id,
+        images: ['https://images.pexels.com/photos/6925512/pexels-photo-6925512.jpeg'],
+        sizes: ['75ml'],
+        skin_type: 'dry',
+        stock: 26,
+        featured: true,
+      },
+      {
+        name: 'Activated Bamboo Charcoal Detox Mask',
+        slug: 'activated-bamboo-charcoal-detox-mask',
+        description: 'Purifying pore mask with activated bamboo charcoal, kaolin clay, and tea tree to absorb excess sebum and clarify pores.',
+        price: 42,
+        category: catMap['masks'] || categories[5]._id,
+        images: ['https://images.pexels.com/photos/8076094/pexels-photo-8076094.jpeg'],
+        sizes: ['75ml'],
+        skin_type: 'oily',
+        stock: 36,
         featured: true,
       },
     ];
@@ -156,9 +306,9 @@ export async function seedDemoData() {
   // Set realistic inventory stock distribution on products (~65% healthy, ~20% low stock 1-5, ~15% out of stock)
   for (let i = 0; i < products.length; i++) {
     const prod = products[i];
-    let newStock = 25 + i * 7;
-    if (i === 2 || i === 5 || i === 7) newStock = Math.floor(Math.random() * 4) + 1; // Low stock (1-5)
-    if (i === 4) newStock = 0; // Out of stock
+    let newStock = 25 + i * 5;
+    if (i === 2 || i === 7 || i === 13) newStock = Math.floor(Math.random() * 4) + 1; // Low stock (1-5)
+    if (i === 10 || i === 15) newStock = 0; // Out of stock
     await Product.findByIdAndUpdate(prod._id, { stock: newStock });
   }
 
@@ -198,19 +348,18 @@ export async function seedDemoData() {
   for (let i = 0; i < names.length; i++) {
     const name = names[i];
     const email = `demo.customer${String(i + 1).padStart(2, '0')}@example.com`;
-    const createdAt = new Date(Date.now() - Math.floor(Math.random() * 330) * 24 * 60 * 60 * 1000);
     demoUsers.push({
       name,
       email,
-      passwordHash: passwordHash,
+      passwordHash,
       role: 'customer',
+      phone: `+91 98765 ${10000 + i}`,
       demoSeedId: DEMO_SEED_ID,
-      createdAt,
     });
   }
   const createdUsers = await User.insertMany(demoUsers);
 
-  // 6. Create ~100 Historical Orders over 12 months with natural variation
+  // 7. Create ~100 Historical Orders over 12 months with natural variation
   const demoOrders = [];
   const statuses = ['delivered', 'delivered', 'delivered', 'shipped', 'processing', 'confirmed', 'pending'];
   const promoCodes = ['', '', '', 'WELCOME10', '', 'LUME15', ''];
@@ -267,30 +416,30 @@ export async function seedDemoData() {
       shippingAddress: {
         full_name: user.name,
         address_line1: `${100 + i} Botanical Way`,
-        city: 'San Francisco',
-        state: 'CA',
-        postal_code: '94107',
-        country: 'United States',
+        city: 'Mumbai',
+        state: 'MH',
+        postal_code: '400001',
+        country: 'India',
       },
       demoSeedId: DEMO_SEED_ID,
       createdAt,
     });
   }
-  const createdOrders = await Order.insertMany(demoOrders);
+  await Order.insertMany(demoOrders);
 
-  // 7. Create Product Event logs over 90 days with clear top/strong/low performance curve
+  // 8. Create Product Event logs over 90 days with clear top/strong/low performance curve
   const demoEvents = [];
   const ninetyDaysAgo = 90;
 
   for (let pIdx = 0; pIdx < products.length; pIdx++) {
     const prod = products[pIdx];
     let eventMultiplier = 15;
-    if (pIdx < 2) eventMultiplier = 80;
-    else if (pIdx < 5) eventMultiplier = 40;
+    if (pIdx < 4) eventMultiplier = 80;
+    else if (pIdx < 10) eventMultiplier = 40;
 
     for (let day = 0; day < ninetyDaysAgo; day++) {
       const timestamp = new Date(Date.now() - day * 24 * 60 * 60 * 1000);
-      const viewsCount = Math.floor(Math.random() * eventMultiplier) + (pIdx < 2 ? 10 : 1);
+      const viewsCount = Math.floor(Math.random() * eventMultiplier) + (pIdx < 4 ? 10 : 1);
       const cartCount = Math.floor(viewsCount * 0.3);
       const wishCount = Math.floor(viewsCount * 0.2);
       const purchaseCount = Math.floor(viewsCount * 0.15);
@@ -339,20 +488,19 @@ export async function seedDemoData() {
   }
   await ProductEvent.insertMany(demoEvents);
 
-  // 8. Create Realistic Demo Reviews for products
+  // 9. Create Realistic Demo Reviews for all products
   const reviewBodies = [
-    { rating: 5, title: 'Incredible texture and results!', body: 'Transformed my dry barrier in 3 days. Will rebuy forever.' },
+    { rating: 5, title: 'Incredible texture and results!', body: 'Transformed my skin barrier in 3 days. Will rebuy forever.' },
     { rating: 5, title: 'Holy grail formula', body: 'LUMÉ got the formulation 100% right. Gentle yet effective.' },
     { rating: 4, title: 'Very soothing formula', body: 'Absorbs quickly without sticky residue. Highly recommend.' },
-    { rating: 5, title: 'Best botanical serum', body: 'Noticeable radiance booster under my moisturizer.' },
-    { rating: 3, title: 'Good but pricey', body: 'Works fine, though I wish the bottle was slightly larger.' },
-    { rating: 4, title: 'Subtle and effective', body: 'Helped reduce redness around my nose area.' },
+    { rating: 5, title: 'Best botanical ritual', body: 'Noticeable radiance booster under my moisturizer.' },
+    { rating: 4, title: 'Subtle and effective', body: 'Helped reduce redness and balance oil production.' },
   ];
 
   const demoReviews = [];
   for (let i = 0; i < products.length; i++) {
     const prod = products[i];
-    const reviewCount = i < 3 ? 6 : 3;
+    const reviewCount = i < 6 ? 5 : 3;
     for (let r = 0; r < reviewCount; r++) {
       const user = createdUsers[(i + r) % createdUsers.length];
       const revData = reviewBodies[(i + r) % reviewBodies.length];
@@ -368,7 +516,7 @@ export async function seedDemoData() {
       });
     }
   }
-  const createdReviews = await Review.insertMany(demoReviews);
+  await Review.insertMany(demoReviews);
 
   // Recalculate review_count & rating on Product collection
   for (const prod of products) {
@@ -378,38 +526,29 @@ export async function seedDemoData() {
         Math.round((prodReviews.reduce((sum, r) => sum + r.rating, 0) / prodReviews.length) * 10) / 10;
       await Product.findByIdAndUpdate(prod._id, {
         rating: avgRating,
-        review_count: prodReviews.length,
+        reviewCount: prodReviews.length,
       });
     }
   }
 
-  const counts = {
-    demoCustomers: createdUsers.length,
-    demoOrders: createdOrders.length,
-    demoEvents: demoEvents.length,
-    demoReviews: createdReviews.length,
-  };
-
-  console.log(`✅ LUMÉ Demo Seeding Complete!`);
-  console.log(`   • Demo Customers: ${counts.demoCustomers}`);
-  console.log(`   • Demo Orders: ${counts.demoOrders}`);
-  console.log(`   • Demo Product Events: ${counts.demoEvents}`);
-  console.log(`   • Demo Reviews: ${counts.demoReviews}`);
-
-  return counts;
+  console.log('✅ LUMÉ Demo Seeding Complete!');
+  console.log(`   • Demo Categories: ${categories.length}`);
+  console.log(`   • Demo Products: ${products.length}`);
+  console.log(`   • Demo Customers: ${createdUsers.length}`);
+  console.log(`   • Demo Orders: ${demoOrders.length}`);
+  console.log(`   • Demo Product Events: ${demoEvents.length}`);
+  console.log(`   • Demo Reviews: ${demoReviews.length}`);
 }
 
-// Execute directly if called from CLI
+// Allow direct CLI execution: node server/src/scripts/seedDemoData.js
 if (process.argv[1] && process.argv[1].endsWith('seedDemoData.js')) {
-  seedDemoData()
-    .then(async () => {
-      if (mongoose.connection.readyState === 1) {
-        await mongoose.disconnect();
-      }
+  seedDemoData(true)
+    .then(() => {
+      console.log('Seeding finished successfully.');
       process.exit(0);
     })
     .catch((err) => {
-      console.error('❌ Demo Seeding Error:', err);
+      console.error('Seeding error:', err);
       process.exit(1);
     });
 }
