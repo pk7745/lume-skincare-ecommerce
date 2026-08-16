@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { env } from './env.js';
 
 let memServer = null;
@@ -53,6 +52,7 @@ export async function connectDB(uri = process.env.MONGODB_URI || env.MONGODB_URI
     }
 
     try {
+      const { MongoMemoryServer } = await import('mongodb-memory-server');
       memServer = await MongoMemoryServer.create({
         instance: {
           port: 27018,
