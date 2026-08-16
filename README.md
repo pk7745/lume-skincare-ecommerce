@@ -54,41 +54,42 @@ LUMÉ is a full-stack, production-grade e-commerce web application meticulously 
 ## 📁 Repository Structure
 
 ```text
-lume-skincare-ecommerce/
-├── project/                     # Root Frontend Application
-│   ├── src/                     # React + TypeScript Source Files
-│   │   ├── components/          # Reusable UI Components (Navbar, ProductCard, AdminLayout...)
-│   │   ├── context/             # React Context Providers (AuthContext, CartContext, WishlistContext)
-│   │   ├── lib/                 # API Client & Services (apiClient, adminApi, productApi...)
-│   │   ├── pages/               # Page Views (HomePage, ShopPage, ProductPage, AdminDashboard...)
-│   │   ├── types/               # TypeScript Interface & Type Definitions
-│   │   ├── App.tsx              # Application Routes & Provider Assembly
-│   │   └── main.tsx             # Entry Point
-│   ├── .env.example             # Frontend Environment Variables Template
-│   ├── index.html               # Main HTML Template
-│   ├── package.json             # Frontend Dependencies & Scripts
-│   ├── tsconfig.json            # TypeScript Compiler Configuration
-│   └── vite.config.ts           # Vite Build Configuration
+.
+├── src/                         # React 18 + TypeScript Storefront Application
+│   ├── components/              # UI & Layout Components (Navbar, ProductCard, AdminLayout...)
+│   ├── context/                 # State Context Providers (Auth, Cart, Wishlist)
+│   ├── lib/                     # Typed API Services (adminApi, authApi, productApi...)
+│   ├── pages/                   # Views & Admin Analytics Suite
+│   ├── stores/                  # Local State Stores (Zustand)
+│   ├── types/                   # TypeScript Type Interfaces
+│   ├── App.tsx                  # Main App Routes & Router Config
+│   ├── index.css                # Core Design Tokens & Global CSS
+│   └── main.tsx                 # React App Entry Point
 │
-└── server/                      # Node.js + Express Backend API
-    ├── src/
-    │   ├── config/              # Database (db.js) & Environment Setup (env.js)
-    │   ├── controllers/         # Express Controllers (auth, products, orders, admin, reviews...)
-    │   ├── middleware/          # Security Middleware (authenticate, requireAdmin, errorHandler...)
-    │   ├── models/              # Mongoose Data Schemas (User, Product, Order, Review, ProductEvent...)
-    │   ├── routes/              # Express API Route Handlers (/api/auth, /api/products, /api/admin...)
-    │   ├── scripts/             # Seeding Scripts (seedDemoData.js, seedRunner.js)
-    │   └── server.js            # Express Server Bootstrap
-    ├── tests/                   # Backend Vitest Automated Test Suite (api.test.js)
-    ├── .env.example             # Backend Environment Variables Template
-    └── package.json             # Backend Dependencies & Test Configuration
+├── server/                      # Node.js + Express Backend API
+│   ├── src/
+│   │   ├── config/              # Database (db.js) & Environment Configuration (env.js)
+│   │   ├── controllers/         # Express API Controllers (admin, auth, orders, products...)
+│   │   ├── middleware/          # Auth, Validation, & Error Handling Middleware
+│   │   ├── models/              # Mongoose Data Schemas (User, Product, Order, ProductEvent...)
+│   │   ├── routes/              # Express API Routes
+│   │   ├── scripts/             # Seeding Engines (seedDemoData.js, seedRunner.js)
+│   │   └── server.js            # Express Server Bootstrap
+│   ├── tests/                   # Automated Vitest End-to-End Test Suite (api.test.js)
+│   └── .env.example             # Backend Environment Template
+│
+├── .env.example                 # Frontend Environment Template
+├── .gitignore                   # Version Control Exclusions
+├── package.json                 # Frontend Package Configuration & Dependencies
+├── tsconfig.json                # TypeScript Root Compiler Setup
+└── vite.config.ts               # Vite Bundler Setup
 ```
 
 ---
 
 ## ⚙️ Environment Variables Setup
 
-Copy `.env.example` to `.env` in both `server/` and `project/` directories:
+Copy `.env.example` to `.env` in both `server/` and root directories:
 
 ### **Backend Configuration (`server/.env`)**
 ```env
@@ -100,9 +101,9 @@ MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/lume?retry
 
 CLIENT_URL=http://localhost:5173
 
-# Security Secrets (Must be 32+ character strings)
-ACCESS_TOKEN_SECRET=lume_jwt_access_token_secret_key_production_32chars
-REFRESH_TOKEN_SECRET=lume_jwt_refresh_token_secret_key_production_32chars
+# Security Secrets (Must be 32+ character strings in production)
+ACCESS_TOKEN_SECRET=your_jwt_access_token_secret_32chars
+REFRESH_TOKEN_SECRET=your_jwt_refresh_token_secret_32chars
 
 ACCESS_TOKEN_EXPIRES_IN=15m
 REFRESH_TOKEN_EXPIRES_IN=7d
@@ -110,12 +111,12 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 # Payment Mode
 PAYMENT_MODE=mock
 
-# Seed Admin Credentials
+# Seed Admin Credentials Config
 SEED_ADMIN_EMAIL=admin@lumeskincare.com
-SEED_ADMIN_PASSWORD=AdminPassword123!
+SEED_ADMIN_PASSWORD=your_configured_admin_password
 ```
 
-### **Frontend Configuration (`project/.env`)**
+### **Frontend Configuration (`.env`)**
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -163,15 +164,6 @@ npm run dev
 
 ---
 
-## 🔐 Credentials for Testing
-
-| Role | Email | Password | Access Level |
-| :--- | :--- | :--- | :--- |
-| 🛡️ **Administrator** | `admin@lumeskincare.com` | `AdminPassword123!` | Full Admin Portal & Analytics Access (`/admin`) |
-| 🛍️ **Customer** | `customer@example.com` | `CustomerPassword123!` | Customer Storefront Checkout & Order History |
-
----
-
 ## 🧪 Testing & Build Verification
 
 ### **Run Backend Vitest Test Suite**
@@ -179,7 +171,6 @@ npm run dev
 cd server
 npm test
 ```
-*Runs 23 automated end-to-end API tests covering authentication, search autocomplete, order placement, analytics aggregations, and authorization rules.*
 
 ### **Run Frontend TypeScript Typecheck**
 ```bash
