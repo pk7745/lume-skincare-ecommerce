@@ -93,9 +93,15 @@ export function ShopPage() {
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-clay-600">
               {q ? `Search results for "${q}"` : 'Shop All'}
             </p>
-            <h1 className="font-display text-4xl font-light text-ink-900 sm:text-5xl">
+            <h1 className="font-display text-4xl font-light text-ink-900 sm:text-5xl capitalize">
               {category
-                ? categories.find((c) => c.slug === category)?.name ?? 'Shop'
+                ? categories.find((c) =>
+                    c.slug === category ||
+                    (category === 'sun-protection' && c.slug === 'sunscreen') ||
+                    (category === 'sunscreen' && c.slug === 'sun-protection') ||
+                    (category === 'masks-treatments' && c.slug === 'masks') ||
+                    (category === 'masks' && c.slug === 'masks-treatments')
+                  )?.name ?? category.replace(/-/g, ' ')
                 : 'All Products'}
             </h1>
             <p className="mt-3 text-sm text-ink-500">

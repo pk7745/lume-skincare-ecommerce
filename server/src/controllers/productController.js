@@ -30,9 +30,14 @@ export async function getProducts(req, res, next) {
     }
 
     if (category) {
+      const normalizedCat = category.toLowerCase().trim();
       const catDoc = await Category.findOne({
         $or: [
-          { slug: category },
+          { slug: normalizedCat },
+          { name: new RegExp(`^${normalizedCat.replace(/-/g, ' ')}$`, 'i') },
+          { name: new RegExp(`^${normalizedCat.replace(/-/g, ' & ')}$`, 'i') },
+          ...(normalizedCat === 'sun-protection' || normalizedCat === 'sunscreen' ? [{ slug: 'sunscreen' }, { slug: 'sun-protection' }] : []),
+          ...(normalizedCat === 'masks-treatments' || normalizedCat === 'masks' ? [{ slug: 'masks' }, { slug: 'masks-treatments' }] : []),
           ...(category.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: category }] : []),
         ],
       });
