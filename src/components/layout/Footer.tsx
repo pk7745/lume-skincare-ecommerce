@@ -49,10 +49,10 @@ export function Footer() {
               Company
             </h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Our Story</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Ingredients</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Sustainability</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Journal</a></li>
+              <li><Link to="/story" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Our Story</Link></li>
+              <li><Link to="/ingredients" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Ingredients</Link></li>
+              <li><Link to="/sustainability" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Sustainability</Link></li>
+              <li><Link to="/journal" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Journal</Link></li>
             </ul>
           </div>
           <div>
@@ -60,10 +60,10 @@ export function Footer() {
               Support
             </h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Shipping & Returns</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Track Order</a></li>
-              <li><a href="#" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Contact</a></li>
+              <li><Link to="/help" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Help Center</Link></li>
+              <li><Link to="/shipping" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Shipping & Returns</Link></li>
+              <li><Link to="/account" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Track Order</Link></li>
+              <li><Link to="/contact" className="text-sm text-sand-200 hover:text-sand-50 transition-colors">Contact</Link></li>
             </ul>
           </div>
           <div>
@@ -71,12 +71,12 @@ export function Footer() {
               Connect
             </h4>
             <div className="flex gap-3">
-              <a href="#" aria-label="Instagram" className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-700 hover:border-sand-300 hover:text-sand-50 transition-colors">
+              <Link to="/contact" aria-label="Instagram" className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-700 hover:border-sand-300 hover:text-sand-50 transition-colors">
                 <Instagram size={18} />
-              </a>
-              <a href="#" aria-label="Email" className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-700 hover:border-sand-300 hover:text-sand-50 transition-colors">
+              </Link>
+              <Link to="/contact" aria-label="Email" className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-700 hover:border-sand-300 hover:text-sand-50 transition-colors">
                 <Mail size={18} />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -85,9 +85,9 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink-700 pt-8 sm:flex-row">
           <p className="text-xs text-ink-400">© 2026 LUMÉ. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Privacy</a>
-            <a href="#" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Terms</a>
-            <a href="#" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Accessibility</a>
+            <Link to="/privacy" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Privacy</Link>
+            <Link to="/terms" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Terms</Link>
+            <Link to="/accessibility" className="text-xs text-ink-400 hover:text-sand-200 transition-colors">Accessibility</Link>
           </div>
         </div>
       </div>

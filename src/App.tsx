@@ -18,6 +18,7 @@ import { CheckoutPage } from '@/pages/CheckoutPage';
 import { AccountPage } from '@/pages/AccountPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage';
+import { ContentPage } from '@/pages/ContentPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
@@ -82,6 +83,18 @@ export default function App() {
             <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
             <Route path="/account" element={<PageTransition><AccountPage /></PageTransition>} />
             <Route path="/order-confirmation" element={<PageTransition><OrderConfirmationPage /></PageTransition>} />
+
+            {/* Content & Information Routes */}
+            <Route path="/story" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/sustainability" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/contact" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/ingredients" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/journal" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/shipping" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/help" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/privacy" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/terms" element={<PageTransition><ContentPage /></PageTransition>} />
+            <Route path="/accessibility" element={<PageTransition><ContentPage /></PageTransition>} />
 
             {/* Admin Routes */}
             <Route
