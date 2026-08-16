@@ -1,8 +1,11 @@
 const getBaseUrl = (): string => {
   const rawUrl = import.meta.env.VITE_API_URL;
   if (rawUrl && rawUrl.trim()) {
-    // Strip trailing slashes centrally
-    return rawUrl.trim().replace(/\/+$/, '');
+    let clean = rawUrl.trim().replace(/\/+$/, '');
+    if (!clean.endsWith('/api')) {
+      clean = `${clean}/api`;
+    }
+    return clean;
   }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
     return '/api';
