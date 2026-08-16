@@ -1,13 +1,16 @@
 const getBaseUrl = (): string => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl) return envUrl;
+  const rawUrl = import.meta.env.VITE_API_URL;
+  if (rawUrl && rawUrl.trim()) {
+    // Strip trailing slashes centrally
+    return rawUrl.trim().replace(/\/+$/, '');
+  }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
     return '/api';
   }
   return 'http://localhost:5000/api';
 };
 
-const BASE_URL = getBaseUrl();
+const API_URL = getBaseUrl();
 
 let memoryAccessToken: string | null = null;
 
@@ -24,7 +27,8 @@ type RequestOptions = RequestInit & {
 };
 
 export async function apiClient<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${API_URL}${cleanEndpoint}`;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -46,7 +50,7 @@ export async function apiClient<T = any>(endpoint: string, options: RequestOptio
   // If 401 Unauthorized, attempt to refresh token once
   if (response.status === 401 && !options.skipRefresh && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh')) {
     try {
-      const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
+      const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
