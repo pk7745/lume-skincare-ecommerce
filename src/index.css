@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-sand-50 text-ink-900 font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv01';
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-display;
+  }
+  ::selection {
+    @apply bg-clay-200 text-ink-900;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-8xl px-5 sm:px-8 lg:px-12;
+  }
+  .skeleton {
+    @apply bg-sand-200 animate-shimmer;
+    background-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    background-size: 200% 100%;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .perspective {
+    perspective: 1000px;
+  }
+}
