@@ -115,7 +115,7 @@ export function AdminAnalyticsPage() {
               <p className="mt-2 font-display text-2xl font-semibold text-ink-900">{inventory.summary.healthyCount}</p>
             </div>
             <div className="rounded-token-lg border border-ink-100 bg-sand-50 p-5">
-              <span className="text-xs font-medium uppercase text-warning-600">Low Stock ($\le 5$)</span>
+              <span className="text-xs font-medium uppercase text-warning-600">Low Stock (≤ 5 units)</span>
               <p className="mt-2 font-display text-2xl font-semibold text-ink-900">{inventory.summary.lowStockCount}</p>
             </div>
             <div className="rounded-token-lg border border-ink-100 bg-sand-50 p-5">

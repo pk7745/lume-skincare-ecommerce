@@ -301,7 +301,7 @@ export function ProductPage() {
                 <p className="text-xs text-ink-600">
                   Free shipping
                   <br />
-                  over $75
+                  over ₹1,500
                 </p>
               </div>
               <div className="flex flex-col items-center gap-2 text-center">

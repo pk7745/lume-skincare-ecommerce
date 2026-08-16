@@ -164,7 +164,7 @@ export function AdminDashboardPage() {
                   chartMetric === 'revenue' ? 'bg-sand-50 text-ink-900 shadow-soft' : 'text-ink-500 hover:text-ink-900'
                 }`}
               >
-                Revenue ($)
+                Revenue (₹)
               </button>
               <button
                 onClick={() => setChartMetric('orders')}

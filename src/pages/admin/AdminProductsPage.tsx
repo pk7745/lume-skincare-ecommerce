@@ -224,7 +224,7 @@ export function AdminProductsPage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Price ($)"
+                  label="Price (₹)"
                   type="number"
                   step="0.01"
                   value={formData.price}
