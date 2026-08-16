@@ -8,28 +8,38 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 
-LUMÉ is a full-stack, production-grade e-commerce web application meticulously designed for modern botanical skincare rituals. Built with a React + TypeScript frontend and a Node.js + Express + MongoDB backend, LUMÉ features JWT authentication with `httpOnly` refresh token rotation, persistent shopping state, real-time product discovery, promo system, mock checkout, and a full-featured, persistent **Admin Analytics Suite**.
+LUMÉ is a full-stack, production-grade e-commerce web application meticulously designed for modern botanical skincare rituals. Built with a React + TypeScript frontend and a Node.js + Express + MongoDB backend, LUMÉ features Indian Rupee (INR / ₹) pricing, 18 distinct products across 6 categories, JWT authentication with `httpOnly` refresh token rotation, persistent shopping state, real-time product discovery, promo system, mock checkout, dedicated editorial content pages, and a full-featured, persistent **Admin Analytics Suite**.
 
 ---
 
 ## ✨ Key Features
 
-### 🛍️ Customer Storefront
-* **Editorial Visual Design**: Editorial aesthetic tailored for luxury skincare.
-* **Product Catalog & Filtering**: Search, category filters, skin-type filters, price sorting, and instant debounced autocomplete search.
+### 🛍️ Customer Storefront & Catalog
+* **Editorial Visual Design**: Editorial aesthetic tailored for luxury botanical skincare.
+* **18 Distinct Botanical Products**: 3 completely unique, distinct products in each of the 6 core categories (Cleansers, Serums, Moisturizers, Sunscreen, Exfoliators, Masks).
+* **Indian Rupee (INR / ₹) Currency**: Native currency formatting across all prices, subtotals, shipping thresholds, and admin metrics.
+* **Product Catalog & Filtering**: Search, category filters with alias matching, skin-type filters, price sorting, and instant debounced autocomplete search.
 * **Product Discovery & Recommendations**: Dynamic trending products, best sellers, new arrivals, and automatic cross-product recommendations.
 * **Wishlist & Cart Management**: Persistent cart drawer, size selection, item stock validation, and promo code redemption (`WELCOME10`, `LUME15`, `GLOW20`).
 * **Customer Authentication**: Secure registration, login, profile management, shipping address book, order history, and product reviews.
 * **Mock & Stripe Payments**: Complete mock checkout flow supporting instant order creation and inventory reduction.
 
+### 📖 Editorial & Information Pages
+* **Our Story (`/story`)**: The LUMÉ Botanical Philosophy, cold-pressed extraction science, and quality commitments.
+* **Sustainability (`/sustainability`)**: Zero-waste packaging, 100% recyclable glass vessels, carbon-neutral delivery, and prepaid bottle return program.
+* **Contact Concierge (`/contact`)**: Interactive inquiry form, support email (`concierge@lumeskincare.com`), phone, and lab location.
+* **Ingredients Library (`/ingredients`)**: Transparent ingredient breakdowns (Squalane, Bakuchiol, Rosehip Oil, Niacinamide, Hyaluronic Acid).
+* **The Journal (`/journal`)**: Skincare articles on barrier repair, Bakuchiol vs Retinol, and morning/evening rituals.
+* **Support & Legal (`/shipping`, `/help`, `/privacy`, `/terms`, `/accessibility`)**: Shipping rates, FAQ, data privacy, and service terms.
+
 ### 📊 Admin Portal & Analytics Suite (`/admin`)
 * **Real MongoDB Analytics**: Zero hardcoded stats — 100% of metrics, KPI trends, line graphs, and tables are computed from real MongoDB aggregations.
-* **Period-over-Period KPI Trends**: Displays live period-over-period percentage changes (`+12.4% vs previous period`) for Revenue, Orders, and Average Order Value (AOV).
-* **Interactive Sales Time-Series Chart**: Supports metric toggling (`Revenue ($)` vs `Orders (#)`) across 7-day, 30-day, 90-day, and 12-month range filters.
+* **Period-over-Period KPI Trends**: Displays live period-over-period percentage changes (`+12.4% vs previous period`) for Revenue (₹), Orders, and Average Order Value (AOV).
+* **Interactive Sales Time-Series Chart**: Supports metric toggling (`Revenue (₹)` vs `Orders (#)`) across 7-day, 30-day, 90-day, and 12-month range filters.
 * **Top Products Performance**: Displays units sold, revenue, stock status, and category breakdown with click-through navigation.
 * **Dedicated Product Performance Page (`/admin/products/:id/analytics`)**: Single-product views, cart additions, wishlist additions, revenue, conversion rate %, historical sales line chart, and demand level.
 * **6-Tab Analytics Suite (`/admin/analytics`)**: Sales, Products, Inventory, Categories, Customers, and Trending analytics tabs with global date range controls.
-* **Demo Seeding Engine & On-Demand Reseed**: Pre-loaded with realistic historical demo records and an admin re-seed trigger (`POST /api/admin/demo/reseed`).
+* **Demo Seeding Engine & On-Demand Reseed**: Pre-loaded with ~100 historical orders, ~55,000 product events, 66 reviews, and an admin re-seed trigger (`POST /api/admin/demo/reseed`).
 
 ---
 
@@ -45,7 +55,7 @@ LUMÉ is a full-stack, production-grade e-commerce web application meticulously 
 ### **Backend**
 * **Runtime**: Node.js
 * **Framework**: Express.js
-* **Database**: MongoDB + Mongoose ODM
+* **Database**: MongoDB + Mongoose ODM (Atlas Cloud Production)
 * **Authentication**: JWT (JSON Web Tokens) with `httpOnly` Refresh Cookie Rotation & bcryptjs password hashing
 * **Test Suite**: Vitest + Supertest
 
@@ -56,10 +66,10 @@ LUMÉ is a full-stack, production-grade e-commerce web application meticulously 
 ```text
 .
 ├── src/                         # React 18 + TypeScript Storefront Application
-│   ├── components/              # UI & Layout Components (Navbar, ProductCard, AdminLayout...)
+│   ├── components/              # UI & Layout Components (Navbar, Footer, ProductCard, AdminLayout...)
 │   ├── context/                 # State Context Providers (Auth, Cart, Wishlist)
-│   ├── lib/                     # Typed API Services (adminApi, authApi, productApi...)
-│   ├── pages/                   # Views & Admin Analytics Suite
+│   ├── lib/                     # Typed API Services (client.ts, adminApi, authApi, productApi...)
+│   ├── pages/                   # Views, Content Pages & Admin Analytics Suite
 │   ├── stores/                  # Local State Stores (Zustand)
 │   ├── types/                   # TypeScript Type Interfaces
 │   ├── App.tsx                  # Main App Routes & Router Config
@@ -142,10 +152,10 @@ cd ..
 ### **2. Seed Database with Idempotent Demo Data**
 ```bash
 cd server
-npm run seed:demo
+node src/scripts/seedDemoData.js
 cd ..
 ```
-*This command generates ~100 historical orders over 12 months, ~26,000 product interaction events, 33 customer reviews, and 25 demo customers.*
+*This command seeds 18 distinct products, ~100 historical orders over 12 months, ~55,000 product interaction events, 66 customer reviews, and 25 demo customers.*
 
 ### **3. Start Development Servers**
 
