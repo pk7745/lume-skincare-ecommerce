@@ -11,7 +11,10 @@ function sanitizeMongoUri(uri) {
 }
 
 export async function connectDB(uri = process.env.MONGODB_URI || env.MONGODB_URI) {
-  const targetUri = uri || 'mongodb://127.0.0.1:27017/lume';
+  let targetUri = uri || 'mongodb://127.0.0.1:27017/lume';
+  if (targetUri.startsWith('mongodb+srv://') && targetUri.includes('.mongodb.net/?')) {
+    targetUri = targetUri.replace('.mongodb.net/?', '.mongodb.net/lume?');
+  }
   const isAtlas = targetUri.startsWith('mongodb+srv://');
   const isProduction = process.env.NODE_ENV === 'production';
 
